@@ -1,7 +1,9 @@
-import type { NextPage } from 'next'
+import { Layout } from '../components/template/Layout'
 
-const Home: NextPage = () => {
-  return <div className="h-screen flex items-center justify-center">oi</div>
+export default function Home() {
+  return (
+    <Layout title="Página inicial" subtitle="Contruindo template admin">
+      <strong>Conteudo!!!</strong>
+    </Layout>
+  )
 }
-
-export default Home
