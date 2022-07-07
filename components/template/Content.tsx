@@ -3,5 +3,7 @@ interface ContentProps {
 }
 
 export function Content(props: ContentProps) {
-  return <main>{props.children}</main>
+  return (
+    <main className="flex flex-col dark:text-gray-200">{props.children}</main>
+  )
 }
