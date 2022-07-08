@@ -4,7 +4,7 @@ import { MenuItem } from './MenuItem'
 
 export function SideBar() {
   return (
-    <aside className="flex flex-col bg-white dark:bg-gray-900">
+    <aside className="flex flex-col bg-white dark:bg-gray-900 transition-colors">
       <div className="flex items-center justify-center w-20 h-20 bg-gradient-to-r from-indigo-500 to-purple-800">
         <Logo />
       </div>
