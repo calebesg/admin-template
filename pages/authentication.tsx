@@ -1,6 +1,8 @@
+import classNames from 'classnames'
 import { FormEvent, useState } from 'react'
 import { AuthInput } from '../components/auth/AuthInput'
 import { Button } from '../components/auth/Button'
+import { Warning } from '../components/icons'
 
 type Mode = 'signIn' | 'signUp'
 
@@ -8,9 +10,11 @@ export default function Authentication() {
   const [mode, setMode] = useState<Mode>('signIn')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [error, setError] = useState<string | null>(null)
 
   const handleSubmit = function (event: FormEvent) {
     event.preventDefault()
+    setError('Authentication failed!')
     console.warn(mode, email, password)
   }
 
@@ -25,13 +29,26 @@ export default function Authentication() {
       </div>
 
       <main className="p-10 flex flex-col items-center w-full md:w-1/2 lg:w-[600px]">
-        <h1 className="text-xl font-bold text-gray-700">
+        <h1 className="text-2xl font-bold text-gray-700">
           {mode === 'signIn' ? 'Enter you account' : 'Sign up for the platform'}
         </h1>
 
+        <div
+          className={classNames(
+            'w-full my-6 items-center gap-2 text-red-600 bg-red-50 border border-red-500 rounded-lg px-4 py-3',
+            {
+              flex: error,
+              hidden: !error,
+            }
+          )}
+        >
+          {Warning()}
+          <span>{error}</span>
+        </div>
+
         <form
           onSubmit={handleSubmit}
-          className="w-full mb-6 pb-6 mt-10 flex flex-col gap-4 border-b border-gray-300"
+          className="w-full mb-6 pb-6 flex flex-col gap-4 border-b border-gray-300"
         >
           <AuthInput
             label="E-mail"
@@ -70,12 +87,12 @@ export default function Authentication() {
           {mode === 'signIn'
             ? 'New around here?'
             : 'Is already part of the community?'}
-          <button
-            className="text-blue-500 hover:text-blue-700 transition-colors"
+          <a
+            className="text-blue-500 hover:text-blue-700 transition-colors cursor-pointer"
             onClick={() => setMode(mode === 'signIn' ? 'signUp' : 'signIn')}
           >
             {mode === 'signIn' ? 'Sign Up' : 'Sign In'}
-          </button>
+          </a>
         </div>
       </main>
     </div>
