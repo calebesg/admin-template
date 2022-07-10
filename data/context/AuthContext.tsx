@@ -1,14 +1,24 @@
 import Router from 'next/router'
-import { createContext, useState } from 'react'
+import { createContext, useEffect, useState } from 'react'
+import Cookies from 'js-cookie'
 import firebase from '../../firebase/config'
 import User from '../../model/User'
 
 interface AuthContextType {
-  user?: User
+  user?: User | null
   loginGoogle?: () => void
 }
 
 const AuthContext = createContext<AuthContextType>({})
+
+const managerCookie = (logged: boolean) => {
+  if (logged) {
+    Cookies.set('admin-template-firebase', String(logged), { expires: 7 })
+    return
+  }
+
+  Cookies.remove('admin-template-firebase')
+}
 
 const normalizeUser = async (user: firebase.User): Promise<User> => {
   const token = await user.getIdToken()
@@ -24,19 +34,37 @@ const normalizeUser = async (user: firebase.User): Promise<User> => {
 }
 
 export function AuthProvider({ children }: any) {
-  const [user, setUser] = useState<User>()
+  const [user, setUser] = useState<User | null>()
+  const [loading, setLoading] = useState(true)
+
+  const configSession = async (userFirebase: any) => {
+    if (!userFirebase?.email) {
+      setUser(null)
+      managerCookie(false)
+      setLoading(false)
+      return false
+    }
+
+    const user = await normalizeUser(userFirebase)
+    setUser(user)
+    managerCookie(true)
+    setLoading(false)
+    return true
+  }
 
   const loginGoogle = async () => {
     const response = await firebase
       .auth()
       .signInWithPopup(new firebase.auth.GoogleAuthProvider())
 
-    if (response.user === null) return
-
-    const user = await normalizeUser(response.user)
-    setUser(user)
+    configSession(response.user)
     Router.push('/')
   }
+
+  useEffect(() => {
+    const killObserver = firebase.auth().onIdTokenChanged(configSession)
+    return () => killObserver()
+  }, [])
 
   return (
     <AuthContext.Provider value={{ user, loginGoogle }}>
