@@ -1,4 +1,5 @@
 import useAppData from '../../data/hook/useAppData'
+import { Avatar } from './Avatar'
 import { ThemeButton } from './ThemeButton'
 import { Title } from './Title'
 
@@ -13,8 +14,9 @@ export function Header(props: HeaderProps) {
   return (
     <header className="flex justify-between">
       <Title title={props.title} subtitle={props.subtitle} />
-      <div className="flex">
+      <div className="flex items-center gap-4">
         <ThemeButton value={theme} onChange={changeTheme} />
+        <Avatar />
       </div>
     </header>
   )
