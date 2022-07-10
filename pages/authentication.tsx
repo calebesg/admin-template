@@ -1,5 +1,7 @@
-import classNames from 'classnames'
 import { FormEvent, useState } from 'react'
+import classNames from 'classnames'
+import { useAuth } from '../data/hook'
+
 import { AuthInput } from '../components/auth/AuthInput'
 import { Button } from '../components/auth/Button'
 import { Warning } from '../components/icons'
@@ -7,15 +9,16 @@ import { Warning } from '../components/icons'
 type Mode = 'signIn' | 'signUp'
 
 export default function Authentication() {
-  const [mode, setMode] = useState<Mode>('signIn')
+  const { user, loginGoogle } = useAuth()
+
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [mode, setMode] = useState<Mode>('signIn')
   const [error, setError] = useState<string | null>(null)
 
   const handleSubmit = function (event: FormEvent) {
     event.preventDefault()
     setError('Authentication failed!')
-    console.warn(mode, email, password)
   }
 
   return (
@@ -81,7 +84,9 @@ export default function Authentication() {
           </footer>
         </form>
 
-        <Button color="red">Enter with Google</Button>
+        <Button color="red" onClick={loginGoogle}>
+          Enter with Google
+        </Button>
 
         <div className="flex justify-start w-full mt-8 gap-2">
           {mode === 'signIn'
