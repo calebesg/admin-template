@@ -7,6 +7,7 @@ import User from '../../model/User'
 interface AuthContextType {
   user?: User | null
   loginGoogle?: () => void
+  logout?: () => void
 }
 
 const AuthContext = createContext<AuthContextType>({})
@@ -53,12 +54,28 @@ export function AuthProvider({ children }: any) {
   }
 
   const loginGoogle = async () => {
-    const response = await firebase
-      .auth()
-      .signInWithPopup(new firebase.auth.GoogleAuthProvider())
+    try {
+      setLoading(true)
+      const response = await firebase
+        .auth()
+        .signInWithPopup(new firebase.auth.GoogleAuthProvider())
 
-    configSession(response.user)
-    Router.push('/')
+      configSession(response.user)
+      Router.push('/')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const logout = async () => {
+    try {
+      setLoading(true)
+      await firebase.auth().signOut()
+      await configSession(null)
+      Router.push('/authentication')
+    } finally {
+      setLoading(false)
+    }
   }
 
   useEffect(() => {
@@ -67,7 +84,7 @@ export function AuthProvider({ children }: any) {
   }, [])
 
   return (
-    <AuthContext.Provider value={{ user, loginGoogle }}>
+    <AuthContext.Provider value={{ user, loginGoogle, logout }}>
       {children}
     </AuthContext.Provider>
   )

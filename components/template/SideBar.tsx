@@ -1,8 +1,10 @@
+import { useAuth } from '../../data/hook'
 import { Home, Adjustments, Notification, LogOut } from '../icons'
 import { Logo } from './Logo'
 import { MenuItem } from './MenuItem'
 
 export function SideBar() {
+  const { logout } = useAuth()
   return (
     <aside className="flex flex-col bg-white dark:bg-gray-900 transition-colors">
       <div className="flex items-center justify-center w-20 h-20 bg-gradient-to-r from-indigo-500 to-purple-800">
@@ -25,7 +27,7 @@ export function SideBar() {
             className="text-red-600 hover:bg-red-300 hover:text-white transition-colors dark:text-red-400 dark:hover:bg-red-800 dark:hover:text-white"
             icon={LogOut}
             text="LogOut"
-            onClick={() => console.log('Logout')}
+            onClick={logout}
           />
         </ul>
       </nav>
