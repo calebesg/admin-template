@@ -9,16 +9,37 @@ import { Warning } from '../components/icons'
 type Mode = 'signIn' | 'signUp'
 
 export default function Authentication() {
-  const { user, loginGoogle } = useAuth()
+  const {
+    loginWithEmailAndPassword,
+    createUserWithEmailAndPassword,
+    loginGoogle,
+  } = useAuth()
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [mode, setMode] = useState<Mode>('signIn')
   const [error, setError] = useState<string | null>(null)
 
-  const handleSubmit = function (event: FormEvent) {
+  const renderError = (message: string, timer = 6) => {
+    setError(message)
+    setTimeout(() => setError(null), timer * 1000)
+  }
+
+  const handleSubmit = async function (event: FormEvent) {
     event.preventDefault()
-    setError('Authentication failed!')
+
+    if (!email || !password) return null
+
+    try {
+      if (mode === 'signIn') {
+        await loginWithEmailAndPassword(email, password)
+        return
+      }
+
+      await createUserWithEmailAndPassword(email, password)
+    } catch (e: any) {
+      renderError(e.message)
+    }
   }
 
   return (

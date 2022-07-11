@@ -7,11 +7,18 @@ import User from '../../model/User'
 interface AuthContextType {
   user?: User | null
   loading?: boolean
+  loginWithEmailAndPassword: (email: string, password: string) => void
+  createUserWithEmailAndPassword: (email: string, password: string) => void
   loginGoogle?: () => void
   logout?: () => void
 }
 
-const AuthContext = createContext<AuthContextType>({})
+const INITIAL_STATE: AuthContextType = {
+  loginWithEmailAndPassword: (email: string, password: string) => {},
+  createUserWithEmailAndPassword: (email: string, password: string) => {},
+}
+
+const AuthContext = createContext<AuthContextType>(INITIAL_STATE)
 
 const managerCookie = (logged: boolean) => {
   if (logged) {
@@ -61,8 +68,37 @@ export function AuthProvider({ children }: any) {
         .auth()
         .signInWithPopup(new firebase.auth.GoogleAuthProvider())
 
-      configSession(response.user)
+      await configSession(response.user)
       Router.push('/')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const loginWithEmailAndPassword = async (email: string, password: string) => {
+    try {
+      setLoading(true)
+      const response = await firebase
+        .auth()
+        .signInWithEmailAndPassword(email, password)
+
+      await configSession(response.user)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const createUserWithEmailAndPassword = async (
+    email: string,
+    password: string
+  ) => {
+    try {
+      setLoading(true)
+      const response = await firebase
+        .auth()
+        .createUserWithEmailAndPassword(email, password)
+
+      await configSession(response.user)
     } finally {
       setLoading(false)
     }
@@ -89,7 +125,16 @@ export function AuthProvider({ children }: any) {
   }, [])
 
   return (
-    <AuthContext.Provider value={{ user, loginGoogle, loading, logout }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        loginGoogle,
+        loginWithEmailAndPassword,
+        createUserWithEmailAndPassword,
+        loading,
+        logout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   )
