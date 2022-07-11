@@ -1,11 +1,12 @@
-import Router from 'next/router'
 import { createContext, useEffect, useState } from 'react'
+import Router from 'next/router'
 import Cookies from 'js-cookie'
 import firebase from '../../firebase/config'
 import User from '../../model/User'
 
 interface AuthContextType {
   user?: User | null
+  loading?: boolean
   loginGoogle?: () => void
   logout?: () => void
 }
@@ -79,12 +80,16 @@ export function AuthProvider({ children }: any) {
   }
 
   useEffect(() => {
-    const killObserver = firebase.auth().onIdTokenChanged(configSession)
-    return () => killObserver()
+    if (Cookies.get('admin-template-firebase')) {
+      const killObserver = firebase.auth().onIdTokenChanged(configSession)
+      return () => killObserver()
+    } else {
+      setLoading(false)
+    }
   }, [])
 
   return (
-    <AuthContext.Provider value={{ user, loginGoogle, logout }}>
+    <AuthContext.Provider value={{ user, loginGoogle, loading, logout }}>
       {children}
     </AuthContext.Provider>
   )

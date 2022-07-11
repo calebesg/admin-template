@@ -4,8 +4,6 @@ import { useAuth } from '../../data/hook'
 export function Avatar() {
   const { user } = useAuth()
 
-  console.log(user?.avatarUrl)
-
   return (
     <Link href="/profile" passHref>
       <img
