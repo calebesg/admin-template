@@ -1,4 +1,4 @@
-import { createContext, useState } from 'react'
+import { createContext, useEffect, useState } from 'react'
 import { Theme, AppContextType } from './type'
 
 const INITIAL_STATE: AppContextType = {
@@ -15,7 +15,17 @@ interface AppProviderProps {
 export function AppProvider(props: AppProviderProps) {
   const [theme, setTheme] = useState<Theme>('')
 
-  const changeTheme = () => setTheme(theme === '' ? 'dark' : '')
+  const changeTheme = () => {
+    const updatedTheme = theme === 'dark' ? '' : 'dark'
+
+    setTheme(updatedTheme)
+    localStorage.setItem('ad_template@theme', updatedTheme)
+  }
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('ad_template@theme') as Theme
+    setTheme(savedTheme)
+  }, [])
 
   return (
     <AppContext.Provider value={{ theme, changeTheme }}>
