@@ -52,14 +52,14 @@ export default function Authentication() {
         />
       </div>
 
-      <main className="p-10 flex flex-col items-center w-full md:w-1/2 lg:w-[600px]">
+      <main className="p-10 gap-6 flex flex-col items-center w-full md:w-1/2 lg:w-[600px]">
         <h1 className="text-2xl font-bold text-gray-700">
           {mode === 'signIn' ? 'Enter you account' : 'Sign up for the platform'}
         </h1>
 
         <div
           className={classNames(
-            'w-full my-6 items-center gap-2 text-red-600 bg-red-50 border border-red-500 rounded-lg px-4 py-3',
+            'w-full items-center gap-2 text-red-600 bg-red-50 border border-red-500 rounded-lg px-4 py-3',
             {
               flex: error,
               hidden: !error,
@@ -72,7 +72,7 @@ export default function Authentication() {
 
         <form
           onSubmit={handleSubmit}
-          className="w-full mb-6 pb-6 flex flex-col gap-4 border-b border-gray-300"
+          className="w-full pb-6 flex flex-col gap-4 border-b border-gray-300"
         >
           <AuthInput
             label="E-mail"
@@ -109,7 +109,7 @@ export default function Authentication() {
           Enter with Google
         </Button>
 
-        <div className="flex justify-start w-full mt-8 gap-2">
+        <div className="flex justify-start w-full mt-2 gap-2">
           {mode === 'signIn'
             ? 'New around here?'
             : 'Is already part of the community?'}
